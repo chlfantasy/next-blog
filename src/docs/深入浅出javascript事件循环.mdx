@@ -1,0 +1,137 @@
+# JavaScript 事件循环：从入门到精通
+
+## 什么是事件循环？
+
+JavaScript 事件循环（Event Loop）是 JavaScript 运行时处理异步操作的核心机制。由于 JavaScript 是单线程语言，事件循环使得它能够非阻塞地处理 I/O 操作、定时器和其他异步任务，这是现代 Web 开发中至关重要的概念。
+
+## 事件循环的核心组件
+
+### 1. 调用栈（Call Stack）
+
+- 用于跟踪当前正在执行的函数
+- 后进先出（LIFO）的数据结构
+- 同步任务按顺序执行
+
+### 2. 任务队列（Task Queue）
+
+#### 宏任务队列（MacroTask Queue）
+
+- setTimeout、setInterval
+- I/O 操作
+- UI 渲染
+- setImmediate（Node.js）
+- requestAnimationFrame
+
+#### 微任务队列（MicroTask Queue）
+
+- Promise.then()、.catch()、.finally()
+- process.nextTick（Node.js）
+- MutationObserver
+- queueMicrotask
+
+## 事件循环执行流程详解
+
+1、执行全局同步代码（宏任务）
+2、执行过程中遇到的异步任务：
+宏任务 → 添加到宏任务队列
+微任务 → 添加到微任务队列
+3、当前调用栈清空后：
+a. 检查微任务队列，依次执行所有微任务
+b. 如有必要，进行 UI 渲染
+c. 从宏任务队列中取出一个任务执行
+4、重复步骤 3，形成循环
+
+## 代码执行顺序分析
+
+```javascript
+console.log('1'); // 同步任务，立即执行
+
+setTimeout(() => {
+    console.log('2'); // 宏任务，下一轮事件循环
+}, 0);
+
+Promise.resolve().then(() => {
+    console.log('3'); // 微任务，当前循环末尾
+});
+
+console.log('4'); // 同步任务，立即执行
+
+// 输出顺序：1 → 4 → 3 → 2
+console.log('Start');
+
+setTimeout(() => {
+    console.log('Timeout 1');
+    Promise.resolve().then(() => console.log('Promise in Timeout'));
+}, 0);
+
+Promise.resolve().then(() => {
+    console.log('Promise 1');
+    setTimeout(() => console.log('Timeout in Promise'), 0);
+});
+
+console.log('End');
+
+// 输出顺序：
+// Start → End → Promise 1 → Timeout 1 → Promise in Timeout → Timeout in Promise
+关键特性解析
+1. 微任务优先级
+每个宏任务执行完毕后，会立即执行所有微任务
+微任务队列必须完全清空后，才会执行下一个宏任务
+微任务中可以继续产生新的微任务，直到达到最大限制
+2. 渲染时机
+浏览器通常在每个宏任务之间进行渲染
+长时间的同步任务会阻塞渲染
+requestAnimationFrame在渲染前执行
+3. Node.js与浏览器的差异
+浏览器环境
+// 浏览器中的执行顺序
+setTimeout(() => console.log('timeout'), 0);
+Promise.resolve().then(() => console.log('promise'));
+// 输出：promise → timeout
+Node.js环境
+// Node.js中的特殊队列
+setImmediate(() => console.log('immediate'));
+setTimeout(() => console.log('timeout'), 0);
+// 输出顺序可能不同，取决于执行上下文
+实际应用场景
+1. 性能优化技巧
+避免阻塞主线程
+// 错误：同步耗时操作
+function processLargeData(data) {
+    // 长时间同步处理...
+}
+
+// 正确：使用微任务拆分
+async function processLargeData(data) {
+    for (let chunk of splitData(data)) {
+        await Promise.resolve().then(() => processChunk(chunk));
+    }
+}
+合理使用requestAnimationFrame
+function animate() {
+    // 动画逻辑
+    requestAnimationFrame(animate);
+}
+animate();
+2. 状态管理优化
+Vue/React中的批量更新
+// Vue 3 Composition API
+import { nextTick } from 'vue'
+
+async function updateData() {
+    state.value = newData;
+    await nextTick();
+    // DOM已更新
+}
+3. 异步编程最佳实践
+// 使用async/await
+async function fetchData() {
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Fetch error:', error);
+    }
+}
+```
