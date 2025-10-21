@@ -155,41 +155,32 @@ export default function Index() {
                   href={`/writing/${navItem.name}`}
                   className="col-span-6 md:col-span-6 hover:text-gray-700"
                 >
-                  <span className="grid grid-cols-6 items-center">
-                    <span
+                  <div className="grid grid-cols-6">
+                    <div
                       className={`col-span-1 text-left py-4${
                         !isSameYear ? "" : " border-b border-gray-200"
                       }`}
                     >
                       {isSameYear && lastModified.getFullYear()}
-                    </span>
-                    <span
-                      className={`col-span-5 md:col-span-5 py-4 border-b border-gray-200${
+                    </div>
+                    <div
+                      className={`col-span-5 py-4 border-b border-gray-200${
                         idx + 1 === docsList.length ? " border-b-0" : ""
                       }`}
                     >
-                      <span className="grid grid-cols-4 items-center md:grid-cols-8">
-                        <span className="col-span-1 text-left">
-                          {`${lastModified
+                      <div className="grid grid-cols-12 text-sm">
+                        <div className="col-span-10 flex items-center gap-4">
+                          <div className="text-left">{`${lastModified
                             .getDate()
                             .toString()
                             .padStart(2, "0")}/${(lastModified.getMonth() + 1)
                             .toString()
-                            .padStart(2, "0")}`}
-                        </span>
-                        <span className="col-span-2 md:col-span-6">
-                          {navItem.name}
-                        </span>
-                        <span className="col-span-1 flex flex-nowrap">
-                          <Star size={16} />
-                          <Star size={16} />
-                          <Star size={16} />
-                          <Star size={16} />
-                          <Star size={16} />
-                        </span>
-                      </span>
-                    </span>
-                  </span>
+                            .padStart(2, "0")}`}</div>
+                          <div className="truncate">{navItem.name}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </Link>
               );
             })}
