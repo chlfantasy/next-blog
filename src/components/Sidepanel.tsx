@@ -88,7 +88,7 @@ const SidebarContent = ({ onNavClick }: { onNavClick?: () => void }) => {
   const currentPathname = usePathname();
   return (
     //
-    <aside className="min-w-60 relative w-full flex-col text-sm bg-zinc-50 p-3 lg:flex lg:flex-col lg:border-r lg:w-60 xl:w-72">
+    <div className="flex h-full w-full flex-col p-3">
       <div className="mb-4 p-2 flex flex-row flex-nowrap gap-2">
         <Avatar>
           <AvatarImage src="/jay.webp" alt="vespser" />
@@ -171,7 +171,7 @@ const SidebarContent = ({ onNavClick }: { onNavClick?: () => void }) => {
           </Link>
         ))}
       </nav> */}
-    </aside>
+    </div>
   );
 };
 export default function Sidepanel() {
