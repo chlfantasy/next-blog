@@ -22,6 +22,7 @@ import {
   Folder,
   Blocks,
   Menu,
+  Brain,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -46,6 +47,7 @@ const navList = [
   { title: "工作空间", href: "/workspace", prefix: <Laptop size={16} /> },
   // { title: "Bookmarks", href: "/bookmarks", prefix: <FolderHeart size={16} /> },
   { title: "Playground", href: "/playground", prefix: <Slack size={16} /> },
+  { title: "AI 探索", href: "/ai-explore", prefix: <Brain size={16} /> },
 ];
 
 const socialList = [
